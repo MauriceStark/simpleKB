@@ -1,0 +1,82 @@
+body{
+  color: #313131;
+  background: #FDFDFD;
+}
+
+.solutionContainer {
+   word-wrap: break-word;
+}
+
+.solutionContainer h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  letter-spacing: -2px;
+}
+
+.solutionContainer h2 {
+  font-size: 22px;
+  line-height: 40px;
+}
+
+.solutionContainer h3 {
+  font-size: 16px;
+  line-height: 32px;
+  font-weight: bold;
+}
+
+.solutionContainer h4 {
+  font-size: 24px;
+  line-height: 28px;
+}
+
+.solutionContainer p {
+  margin-bottom: 20px;
+}
+
+.solutionContainer a {
+  color: #000;
+  border-bottom: 1px dotted #000;
+}
+
+.body-editable a:hover {
+  border-bottom: 1px dotted #0069ff;
+  color: #0069ff;
+  text-decoration: none;
+}
+
+.solutionEdit .body-editable p:hover,
+.solutionEdit  h1:hover,
+.solutionEdit .body-editable h2:hover,
+.solutionEdit .body-editable h3:hover,
+.solutionEdit .body-editable blockquote:hover,
+.solutionEdit .body-editable li:hover{
+  background:rgba(243,156,18,0.1);
+}
+
+.solutionContainer .focus-editable{
+  background:rgba(243,156,18,0.1);
+}
+
+.solutionContainer blockquote {
+  display: block;
+  padding-left: 20px;
+  border-left: 6px solid #df0d32;
+  margin-left: -15px;
+  padding-left: 15px;
+  font-style: italic;
+  color: #555;
+}
+
+.body-editable {
+  outline: none;
+  margin: 0 0 20px 0;
+  padding: 0 0 20px 0;
+}
+
+.title-editable {
+  outline: none;
+  margin: 0 0 20px 0;
+  padding: 0 0 20px 0;
+}

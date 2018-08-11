@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Base de conocimiento</title>
+    <% include includes/head.ejs %>
+  </head>
+  <body>
+    <% include includes/header.ejs %>
+
+    <div class="wrap">
+      <div class="container">
+        
+        <!-- ===============================================================
+          Mensaje si no hay resultados
+        ================================================================ -->
+        <h1 style="text-align: center">
+          <%= favorites.length <= 0 ? "No tienes favoritos guardados" : "" %>
+        </h1>
+
+        <!-- ===============================================================
+          favoritos
+        ================================================================ -->
+        <div class="row">
+          <div class="col-md-12">
+            
+            <ul >
+              <% favorites.forEach(function(favorite){ %>
+                <li>
+                  <a href="/solution/<%= favorite._id %>"><%= favorite.title %></a> 
+                </li>         
+              <% }); %>
+            </ul>
+          </div><!-- /.md -->
+        </div><!-- /.row -->
+    
+      </div><!-- /.container -->
+    </div><!-- /.wrap -->
+    
+    <% include includes/footer.ejs %>
+  </body>
+</html>

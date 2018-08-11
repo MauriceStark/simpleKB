@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Knowledge Base</title>
+    <% include includes/head.ejs %>
+  </head>
+  <body>
+
+    <div class="home">
+      <% include includes/header.ejs %>
+    </div>
+
+    <canvas id="can"></canvas>
+    <div class="wrap" id="home">
+
+      <!-- ===============================================================
+        Search Home
+      ================================================================ -->
+      <div class="jumbotron">
+        <div class="container">
+
+          <div class="bucket-header tutorials-header">
+            <h1 class="display-4">Simple Knowledge Base</h1>
+            <div class="bucket-header-copy">
+              <p>What do you want to learn?</p>
+            </div>
+
+            <div class="content-filter">
+              <form  onsubmit="return false;" action="/" accept-charset="UTF-8" method="post">
+
+                <div class="query-input-container">
+                  <input class="content-filter-query-input" type="text" name="q" v-model="q"  v-on:keyup="search()"  value="" placeholder="Search" autocomplete="off" spellcheck="false" >
+                  <span class="fa fa-search query-icon"></span>
+                </div>
+
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <!-- ===============================================================
+          Filter Bar
+        ================================================================ -->
+        <div class="filter-bar">
+
+          <select class="custom-select" v-on:change="search('type', $event)">
+            <option value="soluciones" value="soluciones" selected> Soluciones </option>
+            <option value="series" value="series"> Series </option>
+          </select>
+
+          <select class="custom-select">
+            <option selected>Filtrar por equipos</option>
+            <option v-for="(team, index) in user.teams"> {{team.team}} </option>
+          </select>
+
+          <a href="/solution/add" class="btn btn-success pull-right">
+            <span class="fa fa-plus" aria-hidden="true" style="margin-right:5px;"></span>
+            Escribir Documento
+          </a>
+        </div>
+
+        <!-- ===============================================================
+          Objects
+        ================================================================ -->
+        <div class="filter-objects">
+
+          <div class="row">
+            <div class="col-md-12">
+
+              <!-- Mensaje si no hay resultados -->
+              <h2 v-if="results.objects.length <= 0" style="text-align: center">
+                No se encontraron resultados
+                <span class="search-query">{{ q }}</span>
+              </h2>
+
+              <div v-for="(object, index) in results.objects">
+                <ul class="feedable-list">
+                  <li data-id="">
+                    <div class="feedable-details">
+
+                      <h3>
+                        <a class="title" v-bind:href="'/' + results.type + '/' + object._id">{{ object.title }}</a>
+                        <a if="object.teams.length" v-for="team in object.teams" v-bind:href="'/team/' + team.team" class="dev-tag" v-cloak>
+                          {{team.team}}
+                        </a>
+                      </h3>
+
+                      <div class="meta">
+                        <span class="author">
+                          By <a v-bind:href="'/user?id=' + object.owner._id">{{object.owner.username}}</a>
+                        </span>
+                        <ul class="tags">
+
+                          <li v-for="tag in object.tags">
+                            <span v-on:click="search('tag', $event)" class="tag">{{tag}}</span>
+                          </li>
+
+                        </ul>
+                      </div>
+
+                    </div>
+                    <span class="feedable-time timeago">{{ object.createdAt | dateFromNow}}</span>
+
+                  </li>
+                </ul>
+              </div>
+
+            </div><!-- /.md -->
+          </div><!-- /.row -->
+        </div><!-- /.filter-objects -->
+
+      </div><!-- /.container -->
+    </div><!-- /.wrap -->
+
+    <% include includes/footer.ejs %>
+    <script src="/dist/js/driftingDots.js"></script>
+    <script src="/dist/js/vue/app/home.js"></script>
+
+  </body>
+</html>

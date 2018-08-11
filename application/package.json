@@ -1,0 +1,46 @@
+{
+  "name": "baseConocimiento",
+  "version": "0.0.0",
+  "private": true,
+  "description": "BC",
+  "main": "app.js",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.14.2",
+    "bower": "^1.8.4",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^1.2.0",
+    "connect-multiparty": "^2.0.0",
+    "cookie-parser": "^1.4.1",
+    "ejs": "^2.3.4",
+    "express": "^4.13.3",
+    "express-session": "^1.11.3",
+    "method-override": "^2.3.5",
+    "mongoose": "^4.3.7",
+    "morgan": "^1.7.0",
+    "multer": "^1.1.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^4.0.0",
+    "sanitize-html": "^1.13.0"
+  },
+  "devDependencies": {
+    "extract-text-webpack-plugin": "^3.0.2",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-sass": "^4.0.1",
+    "nodemon": "^1.9.2",
+    "webpack": "^4.16.5"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "watch-server": "nodemon --legacy-watch server.js",
+    "watch-gulp": "gulp",
+    "install": "bower install",
+    "dev": "npm run watch-server & npm run watch-gulp",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "node debug server.js"
+  },
+  "author": "mauricio",
+  "license": "MIT"
+}

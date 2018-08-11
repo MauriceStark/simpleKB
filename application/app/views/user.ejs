@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Usuarios</title>
+		<% include includes/head.ejs %>
+	</head>
+	<body>
+		<% include includes/header.ejs %>
+
+		<div class="wrap" id="user">
+
+			<div class="container">
+			  <div class="row">
+
+					<div class="col flex-first">
+
+						<h2>{{results.user.username}}</h2>
+						<small class="text-muted">{{results.user.createdAt | dateFormat}}</small>
+
+						<p v-if="results.user.teams.length">Equipos a los que pertenece:</p>
+						<span v-for="t in results.user.teams" class="badge badge-default">
+							{{t.team}}
+						</span>
+
+						<p v-if="results.leader.length">Lider de:</p>
+						<span v-for="t in results.leader" class="badge badge-info">
+							{{t.team}}
+						</span>
+
+						<div v-if="results.leader.length">
+
+							<div class="form-group">
+								<select class="custom-select" v-on:change="getAllUsers($event)">
+									<option value="0" selected>Selecciona un equipo</option>
+									<option v-for="t in results.leader" v-bind:value="t._id">{{t.team}}</option>
+								</select>
+							</div>
+
+							<div class="form-group" v-if="users.length">
+							<input type="text" v-model="username" v-on:keyup="searchUser()" class="form-control" placeholder="Busqueda">
+							 <small class="form-text text-muted">Busca un usuario para agregarlo al equipo.</small>
+							 <ul v-for="user in userSearch">
+								 <li>
+										<a v-bind:href="'/user?id=' + user._id">{{user.username}}</a>
+									 <button type="button" class="btn btn-outline-success btn-sm" v-on:click="addTeam(user._id)" >Agregar al equipo</button>
+								 </li>
+							 </ul>
+						 </div>
+							<hr>
+
+							<ul v-for="user in users">
+								<li>
+									<a v-bind:href="'/user?id=' + user._id">{{user.username}}</a>
+									<button type="button" class="btn btn-outline-danger btn-sm" v-on:click="removeTeam(user._id)">Eliminar del equipo</button>
+								</li>
+							</ul>
+
+						</div>
+					</div>
+
+			    <div class="col flex-last">
+						<!-- ===============================================================
+							Filter Bar
+						================================================================ -->
+						<div class="filter-bar">
+
+							<ul class="nav nav-tabs">
+							  <li class="nav-item">
+							    <a class="nav-link " href="#" v-on:click="getItems('#')" v-bind:class="isActive('#')">Contenido</a>
+							  </li>
+							  <li class="nav-item">
+							    <a class="nav-link" href="#favorites" v-on:click="getItems('#favorites')"  v-bind:class="isActive('#favorites')">Favoritos</a>
+								</li>
+							</ul>
+
+							<br>
+							<div class="form-group">
+								<input type="text" v-model="search" class="form-control" placeholder="Busqueda instantanea">
+							</div>
+
+							<select class="custom-select" v-on:change="filter('type', $event)">
+								<option value="soluciones" value="soluciones" selected> Soluciones </option>
+								<option value="series" value="series"> Series </option>
+							</select>
+
+							<select class="custom-select">
+								<option selected>Filtrar por equipos</option>
+								<option v-for="t in results.user.teams"> {{t.team}} </option>
+							</select>
+						</div>
+
+						<!-- ===============================================================
+							Objects
+						================================================================ -->
+						<!-- Mensaje si no hay resultados -->
+						<h3 v-if="filteredObjects <= 0" style="text-align: center">
+							No se encontraron resultados
+						</h3>
+
+						<div class="filter-objects">
+							<div v-for="object in filteredObjects">
+								<ul class="feedable-list">
+									<li>
+										<div class="feedable-details">
+											<h3>
+												<a class="title" v-bind:href="'/' + results.type + '/' + object._id">{{object.title}}</a>
+												<span v-if="!object.published" class="badge badge-default">En borrador</span>
+											</h3>
+											<div class="meta">
+												<ul class="tags">
+													<li v-for="tag in object.tags">
+														<a v-bind:href="'/?q=&tag=' + tag" class="tag">{{tag}}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+										<span class="feedable-time timeago">{{object.lastModifiedAt | dateFromNow}}</span>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+			    </div>
+
+			  </div>
+			</div>
+
+		<div>
+
+		<% include includes/footer.ejs %>
+		<script src="/dist/js/vue/app/user.js"></script>
+	</body>
+</html>

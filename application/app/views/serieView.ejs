@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Base de conocimiento</title>
+    <% include includes/head.ejs %>
+  </head>
+  <body>
+    <% include includes/header.ejs %>
+
+    <div class="wrap">
+      <div class="container">
+        
+        <h1><%= title %></h1>
+        <%- description %>
+
+        <ul >
+          <% solutions.forEach(function(solution){ %>
+            <li>
+              <a href="/solution/<%= solution._id %>"><%= solution.title %></a> 
+            </li>         
+          <% }); %>
+        </ul>
+
+      </div><!-- /.container -->
+    </div><!-- /.wrap -->
+    
+    <% include includes/footer.ejs %>
+  </body>
+</html>

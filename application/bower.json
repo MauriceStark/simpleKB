@@ -1,0 +1,30 @@
+{
+  "name": "KB",
+  "private": true,
+  "version": "0.0.1",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "package.json"
+  ],
+  "dependencies": {
+    "bootstrap": "v4.0.0-alpha.6",
+    "notie": "^3.9.4",
+    "vue": "^2.0.1",
+    "vue-resource": "^1.0.3",
+    "moment": "^2.15.1"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/css/bootstrap.min.css",
+        "dist/js/bootstrap.min.js"
+      ]
+    },
+    "jquery": {
+      "main": "dist/jquery.min.js"
+    }
+  }
+}

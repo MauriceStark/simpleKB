@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Admin</title>
+		<% include includes/head.ejs %>
+	</head>
+	<body>
+		<% include includes/header.ejs %>
+
+		<style media="screen">
+			.fade-enter-active,
+			.fade-leave-active{
+				transition: opacity 0.2s ease;
+			}
+
+			.fade-enter,
+			.fade-leave-active {
+				opacity: 0;
+			}
+
+			/* always present */
+			.expand-enter-active,
+			.expand-leave-active{
+			  transition: all .3s ease;
+			  height: 100%;
+			  padding: 10px;
+			  background-color: #eee;
+			  overflow: hidden;
+			}
+			/* .expand-enter defines the starting state for entering */
+			/* .expand-leave-active  defines the ending state for leaving */
+			.expand-enter, .expand-leave-active  {
+			  height: 0;
+			  padding: 0 10px;
+			  opacity: 0;
+			}
+
+			* {
+			  box-sizing: border-box;
+			}
+
+			.modal-mask {
+		    position: fixed;
+		    z-index: 9998;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: 100%;
+		    background-color: rgba(0, 0, 0, .2);
+		    transition: opacity .3s ease;
+			}
+
+			.modal-container {
+		    width: 600px;
+		    margin: 40px auto 0;
+		    padding: 20px 30px;
+		    background-color: #fff;
+		    border-radius: 2px;
+		    box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+		    transition: all .2s ease;
+			}
+
+			.modal-header h3 {
+		    margin-top: 0;
+		    color: #42b983;
+			}
+
+			.modal-body {
+			  margin: 20px 0;
+			}
+
+			.modal-enter, .modal-leave-active{
+			  opacity: 0;
+			}
+
+			.modal-enter .modal-container,
+			.modal-leave-active .modal-container {
+		    -webkit-transform: scale(1.05);
+		    transform: scale(1.05);
+				/*webkit-transform: translateY(-8%);
+								transform: translateY(-8%);*/
+			}
+
+		</style>
+
+		<div class="container">
+
+			<div class="row">
+				<% stats.forEach(function(stat){ %>
+					<div class="col-sm-3">
+
+						<div class="card card-outline-info text-xs-center">
+  						<div class="card-block">
+					      <h4 class="card-title"><%= stat.name %></h4>
+					      <h5 class="card-text"><%= stat.count %></h5>
+								<p class="card-text">Coleccion: <%= stat.storageSize %> Kb</p>
+								<p class="card-text">Documentos: <%= stat.size %> Kb</p>
+				    	</div>
+						</div>
+
+			  	</div>
+				<% }); %>
+			</div>
+
+			<div id="dashboard">
+
+				<form class="form-inline pull-xs-right">
+					<input class="form-control" type="text" v-model="q"  v-on:keyup.enter="search()" placeholder="Admin search">
+				</form>
+
+				<ul class="nav nav-tabs">
+					<li class="nav-item">
+						<a href="#" class="nav-link" v-on:click="getItems('users')"  v-bind:class="isActive('users')">Usuarios</a>
+					</li>
+					<li class="nav-item">
+						<a href="#" class="nav-link"  v-on:click="getItems('solutions')"  v-bind:class="isActive('solutions')">Soluciones</a>
+					</li>
+					<li class="nav-item">
+						<a href="#" class="nav-link"  v-on:click="getItems('series')"  v-bind:class="isActive('series')">Series</a>
+					</li>
+					<li class="nav-item">
+						<a href="#" class="nav-link"  v-on:click="getItems('teams')"  v-bind:class="isActive('teams')">Equipos</a>
+					</li>
+					<li class="nav-item">
+						<a href="#" class="nav-link"  v-on:click="getItems('tags')"  v-bind:class="isActive('tags')">Tags</a>
+					</li>
+				</ul>
+
+				 <div class="row">
+					 <div class="col-md-12">
+						 <!-- render the currently active component/page here -->
+						 <!-- mediante la directiva v-bind se pasan datos del componente padre al hijo -->
+						<component
+							:is="currentView"
+							v-bind:items="items"
+							transition="fade"
+							transition-mode="out-in">
+						</component>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<!-- ===============================================================
+			Template for the users component
+		================================================================ -->
+		<template id="users-template">
+			<div> <!-- this is important -->
+
+				<modal-user v-bind:show="showUserModal" v-bind:users="user" v-bind:user="user"></modal-user>
+
+				<div class="list-group" v-for="(item, index) in items">
+					<a href="#" v-on:click="openModal(item)" class="list-group-item list-group-item-action">{{ index + 1 }} {{ item.username }}</a>
+				</div>
+			</div>
+		</template>
+
+		<!-- ===============================================================
+			Template for the solutions component
+		================================================================ -->
+		<template id="solutions-template">
+			<div> <!-- this is important -->
+
+				<table class="table">
+				  <thead class="thead-inverse">
+				    <tr>
+				      <th>#</th>
+				      <th>Titulo</th>
+				      <th>Autor</th>
+				      <th>Creado</th>
+							<th>Modificado</th>
+							<th>Tags</th>
+							<th>Equipo</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr v-for="(item, index) in items">
+				      <th scope="row">{{index + 1}}</th>
+							<td>
+								<small>
+									<a v-bind:href="'/solution/' + item._id">{{ item.title }}</a>
+									<span class="tag tag-default">{{item.published ? "Publicado" : "Borrador" }}</span>
+								</small>
+							</td>
+							<td><small>{{ item.owner.username }}</small></td>
+							<td><small>{{ item.createdAt | dateFormat  }}</small></td>
+							<td><small>{{ item.lastModifiedAt | dateFromNow }}</small></td>
+							<td>
+								<ol>
+									<small v-for="(tag, index) in item.tags">
+										<li>
+											<a  v-bind:href="'/tag/' + tag">{{tag}}</a>
+										</li>
+									</small>
+								</ol>
+							</td>
+							<td>
+								<ol>
+									<small v-for="(team, index) in item.teams">
+										<li>{{ team.team }}</li>
+									</small>
+								</ol>
+							</td>
+				    </tr>
+				  </tbody>
+				</table>
+
+				<!-- <ol>
+					<div v-for="(item, index) in items">
+						<li>
+							<ul>
+								<li><small>Autor: {{ item.owner.username }}</small></li>
+								<li><small>Creado:{{ item.createdAt }}</small></li>
+								<li><small>Modificado:{{ item.lastModifiedAt }}</small></li>
+								<li><small>Tags: {{ item.tags }}</small></li>
+								<li><small>Equipos:{{ item.teams }}</small></li>
+							</ul>
+						</li>
+					</div>
+				</ol> -->
+
+			</div>
+		</template>
+
+		<!-- ===============================================================
+			Template for the series component
+		================================================================ -->
+		<template id="series-template">
+			<div> <!-- this is important -->
+				<table class="table">
+					<thead class="thead-inverse">
+						<tr>
+							<th>#</th>
+							<th>Titulo</th>
+							<th>Autor</th>
+							<th>Creado</th>
+							<th>Modificado</th>
+							<th>Soluciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(item, index) in items">
+							<th scope="row">{{index + 1}}</th>
+							<td><small><a  v-bind:href="'/serie/' + item._id">{{ item.title }}</a></small></td>
+							<td><small>{{ item.owner.username }}</small></td>
+							<td><small>{{ item.createdAt | dateFormat  }}</small></td>
+							<td><small>{{ item.lastModifiedAt | dateFromNow }}</small></td>
+							<td>
+								<ol>
+									<small v-for="(solution, index) in item.solutions">
+										<li>{{solution.title }}</li>
+									</small>
+								</ol>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- <ol>
+					<div v-for="(item, index) in items">
+					<li><a v-bind:href="'/serie/' + item._id" >{{ item.title }}</a></li>
+					</div>
+				</ol> -->
+			</div>
+		</template>
+
+		<!-- ===============================================================
+			Template for the series component
+		================================================================ -->
+		<template id="teams-template">
+			<div> <!-- this is important -->
+
+				<modal-team v-bind:show="showTeamModal"></modal-team>
+
+				<button class="btn btn-outline-info"  v-on:click="createTeam()"> Crear Equipo </button>
+
+				<ol>
+					<div v-for="(item, index) in items">
+						<li><a v-bind:href="'/team/' + item.team">{{ item.team }}</a>
+						<p>Encargado: {{ item.leader.username }}</p>
+						</li>
+					</div>
+				</ol>
+
+			</div>
+		</template>
+
+		<!-- ===============================================================
+			Template for the tags component
+		================================================================ -->
+		<template id="tags-template">
+			<div> <!-- this is important -->
+				<ol>
+					<div v-for="(item, index) in items">
+					 <li><a v-bind:href="'/tag/' + item._id">{{ item._id }} </a><span class="tag tag-default"> {{ item.count }} </span></li>
+					</div>
+				</ol>
+			</div>
+		</template>
+
+		<!-- ===============================================================
+			Template for the user modal component
+		================================================================ -->
+		<template id="modalUser-template">
+			<transition name="modal">
+				<div class="modal-mask" v-show="show">
+					<div class="modal-container">
+
+						<button type="button" class="close" v-on:click="close()"><span aria-hidden="true">&times;</span></button>
+
+						<div class="modal-header">
+							<h3>{{ user.username}}</h3>
+						</div>
+
+						<div class="modal-body">
+							<ul>
+								<li>Creado el: {{ user.createdAt | dateFormat }}</li>
+								<li>Activo: {{ user.isActive }}
+									<div class="can-toggle">
+										<input id="isActive" type="checkbox" v-model="user.isActive " v-bind:checked="user.isActive">
+										<label for="isActive">
+											<div class="switch" data-checked="On" data-unchecked="Off"></div>
+										</label>
+									</div>
+								</li>
+
+								<li>Sesion activa: {{ user.lastLogin | dateFromNow }}</li>
+								<li>
+									Equipos:
+
+									<div class="row">
+										<div class="col-md-6">
+											<ol>
+												<li v-for="team in user.teams">{{ team.team }}</li>
+												<!-- <li v-bind:data-id="team._id"> {{team.team}} 	<button class="btn" v-on:click="deleteTeam(team)">delete</button></li> -->
+												<!-- <li><input type="checkbox" v-bind:id="team._id" v-bind:value="team._id" v-model="user.teams"><label v-bind:for="team._id">{{team.team}}</label></li> -->
+											</ol>
+
+
+											<!-- <div class="form-inline">
+												<input type="text" class="form-control" placeholder="Team" v-model="newTeam"/>
+												<button type="submit" class="btn  btn-primary" v-on:click="addTeam">Add</button>
+											</div> -->
+
+										</div>
+									</div>
+
+								</li>
+								<li>ID: {{ user._id }}</li>
+
+								<li>
+									Es administrador: {{ user.isAdmin }}
+									<div class="can-toggle">
+										<input id="isAdmin" type="checkbox" v-model="user.isAdmin " v-bind:checked="user.isAdmin">
+										<label for="isAdmin">
+											<div class="switch" data-checked="On" data-unchecked="Off"></div>
+										</label>
+									</div>
+								</li>
+
+							</ul>
+						</div>
+
+						<div class="modal-footer">
+							<button class="btn btn-outline-success" v-on:click="save()"> Guardar </button>
+						</div>
+
+					</div>
+				</div>
+			</transition>
+		</template>
+
+			<!-- ===============================================================
+				Template for the modal component
+			================================================================ -->
+			<template id="modalTeam-template">
+				<transition name="modal">
+				<div class="modal-mask" v-show="show">
+					<div class="modal-container">
+						<button type="button" class="close" v-on:click="close()"><span aria-hidden="true">&times;</span></button>
+
+						<div class="modal-header">
+								<h3>Nuevo Equipo</h3>
+						</div>
+
+						<form>
+							<div class="form-group">
+								<label for="exampleInputEmail1">Team Name</label>
+								<input type="text" v-model="team" class="form-control"  placeholder="Team...">
+								<small class="form-text text-muted">Es el nombre que tendra el equipo.</small>
+							</div>
+							<div class="form-group">
+								<label for="exampleInputEmail1">Leader</label>
+								<input type="text" v-model="leader" class="form-control"  placeholder="Leader...">
+								<small class="form-text text-muted">Seleccione al responsable de administrar el equipo.</small>
+							</div>
+							<div class="modal-footer">
+								<button class="btn btn-outline-success" v-on:click="save()"> Guardar </button>
+							</div>
+						</form>
+
+					</div>
+				</div>
+			</transition>
+			</template>
+			<% include includes/footer.ejs %>
+			<script src="/dist/js/vue/app/admin.js"></script>
+	</body>
+</html>
