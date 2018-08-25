@@ -2,27 +2,22 @@
 
   const PI = Math.PI;
 
-  const colors = {
+  var colors = {
     background: "#171e26", //#016bc0
     lines:      "rgba(255, 255, 255, 0.2)",
     triangles:  "rgba(0, 196, 204, 0.2)",
+    triangles2: "rgba(61, 125, 231, 0.2)",
     particle:   "rgba(255, 255, 255, 0.9)",
   }
 
-  const config = {
+  var config = {
     separation: 250,
     size:     600,
     quantity: 400,
-    velocity: 3,
+    velocity: 2,
     distance: 100
   }
-
-  var objIdCount = 0;
-  var objects = [];
-  var particles = [];
-
-  var ldt;
-  var dt;
+ 
 
   window.onresize = function() {
     reset()
@@ -49,6 +44,8 @@
   function randPosNeg() {
     return (Math.random() > 0.5 ? 1 : -1);
   }
+
+  var objIdCount = 0;
 
   function getObjId() {
     return objIdCount++;
@@ -196,7 +193,12 @@
         c.lineTo(c3.p.x,c3.p.y);
         c.closePath();
 
-        c.fillStyle = colors.triangles;
+        if(i % 2 == 0){
+          c.fillStyle = colors.triangles;
+        }else{
+          c.fillStyle = colors.triangles2;
+        }
+        
         c.fill();
         //c.stroke();
       }
@@ -204,6 +206,8 @@
     c.restore();
   }
 
+  var objects = [];
+  var particles = [];
  
   function reset() {
     canvas.width = window.innerWidth;
@@ -221,7 +225,8 @@
     }
   }
 
-
+  var ldt;
+  var dt;
 
   function animate() {
     dt = new Date() - ldt;

@@ -125,13 +125,4 @@ Peso de los Permisos
 
 Use "nodemon --legacy-watch server.js" to poll for file changes instead of listening to file system events.
 
-- All:
 
-    - README*: Read this first
-    - LICENCE*: The licence of the project. This file will tell you what you can and can't use this project for. Before using the project read this file.
-    - dist/: distribution, it usually contains the compiled software.
-    - package.json: describes the package
-    - lib/: contains the package's dependencies
-    - src/: contains the sources of the package
-    - test/: contains the project's tests
-    - bin/: these are files that get added to your path when this package is installed
